@@ -7,8 +7,9 @@ node_modules
 src/react
 cdn
 
-# Custom Shoelace
+## CUSTOM SHOELACE START
 **/*
 !**/themes/light.css
 !**/components/button/*
-!**/components/button/*
+!**/components/status-text/*
+## CUSTOM SHOELACE END

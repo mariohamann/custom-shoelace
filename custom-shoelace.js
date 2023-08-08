@@ -4,6 +4,9 @@ import download from 'download-git-repo';
 import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';  // Make sure to install "glob" module
+// Helper function to execute shell commands
+import { execSync } from 'child_process';
+
 
 const CONFIG_FILE = 'custom-shoelace.config.json';
 const repo = 'shoelace-style/shoelace';
@@ -77,49 +80,6 @@ const version = await select({
   ],
 });
 
-function deleteUnprotectedFiles(directory, protectedGlobs, rootDirectory) {
-  const allFilesAndFolders = fs.readdirSync(directory);
-
-  for (const item of allFilesAndFolders) {
-    const fullPath = path.join(directory, item);
-    const relativePath = path.relative(rootDirectory, fullPath);
-
-    if (fs.statSync(fullPath).isDirectory()) {
-      deleteUnprotectedFiles(fullPath, protectedGlobs, rootDirectory);  // Recursive call for directories
-    } else {
-      let shouldDelete = true;
-      for (const pattern of protectedGlobs) {
-        if (glob.sync(pattern, { cwd: rootDirectory }).includes(relativePath)) {
-          shouldDelete = false;
-          break;
-        }
-      }
-
-      if (shouldDelete) {
-        fs.unlinkSync(fullPath);
-      }
-    }
-  }
-}
-
-
-function deleteEmptyDirectories(directory, rootDirectory) {
-  const items = fs.readdirSync(directory);
-
-  for (const item of items) {
-    const fullPath = path.join(directory, item);
-    if (fs.statSync(fullPath).isDirectory()) {
-      deleteEmptyDirectories(fullPath, rootDirectory);
-    }
-  }
-
-  // Check after going through subdirectories
-  if (fs.readdirSync(directory).length === 0 && directory !== rootDirectory) {
-    fs.rmdirSync(directory);
-  }
-}
-
-
 function isProtected(filePath, protectedGlobs, rootDirectory) {
   const relativePath = path.relative(rootDirectory, filePath);
   for (const pattern of protectedGlobs) {
@@ -190,8 +150,6 @@ function processDirectory(directory) {
   });
 }
 
-
-
 // Main replacement function
 function updateLibraryFileWithComponents(libraryName, components) {
   // Helper functions
@@ -216,7 +174,47 @@ function updateLibraryFileWithComponents(libraryName, components) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-// Before downloading, clear the files and folders that don't match the "protected" globs
+// Function to delete a directory recursively
+function deleteFolderRecursive(directory) {
+  if (fs.existsSync(directory)) {
+    fs.readdirSync(directory).forEach((file) => {
+      const curPath = path.join(directory, file);
+
+      if (fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+
+    fs.rmdirSync(directory);
+  }
+}
+
+function updateGitIgnoreWithProtectedEntries(directory, protectedEntries) {
+  const gitignorePath = path.join(directory, '.gitignore');
+
+  const customSection = `
+## CUSTOM SHOELACE START
+**/*
+${protectedEntries.map(entry => entry.startsWith('!') ? entry : `!${entry}`).join('\n')}
+## CUSTOM SHOELACE END
+`;
+  // If not, simply append it
+  fs.appendFileSync(gitignorePath, customSection);
+}
+
+function forceCopyFile(source, destination) {
+  if (fs.existsSync(source)) {
+    fs.copyFileSync(source, destination);
+  }
+}
+
+// Before downloading, clear the temp directory
+deleteFolderRecursive(dest);
+if (!fs.existsSync(dest)) {
+  fs.mkdirSync(dest, { recursive: true });
+}
 
 // Download the repo
 // @ts-ignore
@@ -226,11 +224,23 @@ await download(`${repo}#${version}`, dest, (err) => {
     return;
   }
 
-  deleteUnprotectedFiles(finalDest, config.protected || [], finalDest);
-  deleteEmptyDirectories(finalDest, finalDest);
+  // Use git clean to remove all files ignored by .gitignore
+  execSync(`git clean ${finalDest} -X -f`);
+
   processDirectory(dest);
   copyDirectory(dest, finalDest, config.protected || []);
+  // Update .gitignore with protected entries
+  updateGitIgnoreWithProtectedEntries(dest, config.protected);
+  // Force copy the updated .gitignore to finalDest
+  forceCopyFile(path.join(dest, '.gitignore'), path.join(finalDest, '.gitignore'));
+
   updateLibraryFileWithComponents(libraryName, config.additionalComponents || []);
 
   outro(`You're all set!`);
+
+  // Before downloading, clear the temp directory
+  deleteFolderRecursive(dest);
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
 });
