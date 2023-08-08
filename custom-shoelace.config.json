@@ -3,6 +3,10 @@
   "libraryPrefix": "ld",
   "protected": [
     "**/themes/light.css",
-    "**/components/button/*"
+    "**/components/button/*",
+    "**/components/status-text/*"
+  ],
+  "additionalComponents": [
+    "ld-status-text"
   ]
 }

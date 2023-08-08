@@ -56,6 +56,7 @@ export { default as LdTooltip } from './components/tooltip/tooltip.js';
 export { default as LdTree } from './components/tree/tree.js';
 export { default as LdTreeItem } from './components/tree-item/tree-item.js';
 export { default as LdVisuallyHidden } from './components/visually-hidden/visually-hidden.js';
+export { default as LdStatusText } from './components/status-text/status-text.js';
 /* plop:component */
 
 // Utilities

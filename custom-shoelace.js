@@ -190,6 +190,32 @@ function processDirectory(directory) {
   });
 }
 
+
+
+// Main replacement function
+function updateLibraryFileWithComponents(libraryName, components) {
+  // Helper functions
+  function properCase(tag) {
+    return tag.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  }
+
+  function tagWithoutPrefix(tag) {
+    return tag.slice(String(libraryPrefix).length + 1);  // Adding 1 for the '-' after prefix
+  }
+
+  const filePath = `src/${String(libraryName)}.ts`;
+  let content = fs.readFileSync(filePath, 'utf8');
+
+  const newComponents = components.map(component => {
+    return `export { default as ${properCase(component)} } from './components/${tagWithoutPrefix(component)}/${tagWithoutPrefix(component)}.js';`
+  }).join('\n');
+
+  // Insert new components before /* plop:component */
+  content = content.replace('/* plop:component */', `${newComponents}\n/* plop:component */`);
+
+  fs.writeFileSync(filePath, content, 'utf8');
+}
+
 // Before downloading, clear the files and folders that don't match the "protected" globs
 
 // Download the repo
@@ -204,6 +230,8 @@ await download(`${repo}#${version}`, dest, (err) => {
   deleteEmptyDirectories(finalDest, finalDest);
   processDirectory(dest);
   copyDirectory(dest, finalDest, config.protected || []);
+  updateLibraryFileWithComponents(libraryName, config.additionalComponents || []);
+
 });
 
 outro(`You're all set!`);
