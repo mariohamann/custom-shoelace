@@ -6,3 +6,9 @@ docs/assets/images/sprite.svg
 node_modules
 src/react
 cdn
+
+# Custom Shoelace
+**/*
+!**/themes/light.css
+!**/components/button/*
+!**/components/button/*
