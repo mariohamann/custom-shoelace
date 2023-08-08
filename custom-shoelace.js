@@ -3,244 +3,148 @@ import { intro, outro, text, select } from '@clack/prompts';
 import download from 'download-git-repo';
 import fs from 'fs';
 import path from 'path';
-import { glob } from 'glob';  // Make sure to install "glob" module
-// Helper function to execute shell commands
+import { glob } from 'glob';
 import { execSync } from 'child_process';
-
 
 const CONFIG_FILE = 'custom-shoelace.config.json';
 const repo = 'shoelace-style/shoelace';
 const dest = 'temp/repo';
 const finalDest = './packages/components';
 
-intro(`🥾 Custom Shoelace CLI`);
+intro('🥾 Custom Shoelace CLI');
 
-// Function to read the config file
 function readConfig() {
-  if (fs.existsSync(CONFIG_FILE)) {
-    return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-  }
-  return {};
+  return fs.existsSync(CONFIG_FILE) ? JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) : {};
 }
 
-// Function to save the config file
 function saveConfig(config) {
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 }
 
-const config = readConfig();
-let { libraryName, libraryPrefix } = config;
-
-if (!libraryName) {
-  libraryName = await text({
-    message: "What's the name of your library? (only lowercase letters)",
-    placeholder: 'shoelace',
-    validate(value) {
-      // check if there any non-letter characters
-      if (value && !/^[a-z]+$/.test(value)) {
-        return 'Only lowercase letters are allowed';
-      }
-    },
-  });
-
-  config.libraryName = libraryName;  // save to config
+async function getConfigParam(paramName, message, placeholder, pattern, errorMessage) {
+  let paramValue = readConfig()[paramName];
+  if (!paramValue) {
+    paramValue = await text({
+      message,
+      placeholder,
+      validate(value) {
+        if (value && !pattern.test(value)) return errorMessage;
+      },
+    });
+    const config = readConfig();
+    config[paramName] = paramValue;
+    saveConfig(config);
+  }
+  return paramValue;
 }
-
-if (!libraryPrefix) {
-  libraryPrefix = await text({
-    message: "What's the prefix of your components? (only lowercase letters)",
-    placeholder: 'sl',
-    validate(value) {
-      // check if there any non-letter characters
-      if (value && !/^[a-z]+$/.test(value)) {
-        return 'Only uppercase letters are allowed';
-      }
-    },
-  });
-
-  config.libraryPrefix = libraryPrefix;  // save to config
-}
-
-// Save updated config if needed
-saveConfig(config);
-
-const version = await select({
-  message: 'Which version do you want to install?',
-  options: [
-    { value: 'next' },
-    { value: 'v2.6.0' },
-    { value: 'v2.5.2' },
-    { value: 'v2.5.1' },
-    { value: 'v2.5.0' },
-    { value: 'v2.4.0' },
-    { value: 'v2.3.0' },
-    { value: 'v2.2.0' },
-    { value: 'v2.1.0' },
-    { value: 'v2.0.0' },
-  ],
-});
 
 function isProtected(filePath, protectedGlobs, rootDirectory) {
-  const relativePath = path.relative(rootDirectory, filePath);
-  for (const pattern of protectedGlobs) {
-    if (glob.sync(pattern, { cwd: rootDirectory }).includes(relativePath)) {
-      return true;
-    }
-  }
-  return false;
+  return glob.sync(protectedGlobs.join('|'), { cwd: rootDirectory }).includes(path.relative(rootDirectory, filePath));
 }
 
-function copyDirectory(source, target, protectedGlobs, rootDirectory = target) {
+function copyDirectory(source, target, protectedGlobs) {
   fs.readdirSync(source).forEach(item => {
     const sourcePath = path.join(source, item);
     const targetPath = path.join(target, item);
 
-    if (fs.statSync(sourcePath).isDirectory()) {
-      if (!isProtected(sourcePath, protectedGlobs, rootDirectory)) {
+    if (!isProtected(sourcePath, protectedGlobs, target)) {
+      if (fs.statSync(sourcePath).isDirectory()) {
         fs.mkdirSync(targetPath, { recursive: true });
-        copyDirectory(sourcePath, targetPath, protectedGlobs, rootDirectory);  // Recursive call for subdirectories
+        copyDirectory(sourcePath, targetPath, protectedGlobs);
+      } else if (!fs.existsSync(targetPath)) {
+        fs.copyFileSync(sourcePath, targetPath);
       }
-    } else if (!fs.existsSync(targetPath) && !isProtected(targetPath, protectedGlobs, rootDirectory)) {
-      fs.copyFileSync(sourcePath, targetPath);
     }
   });
 }
 
-
-function replaceContent(content) {
-  const transformedLibraryPrefix = String(libraryPrefix).charAt(0).toUpperCase() + String(libraryPrefix).slice(1);
-  const transformedLibraryName = String(libraryName).charAt(0).toUpperCase() + String(libraryName).slice(1);
-  const lowerLibraryName = String(libraryName).toLowerCase();
+function replaceContent(content, libraryName, libraryPrefix) {
+  const capitalizedPrefix = `${libraryPrefix.charAt(0).toUpperCase()}${libraryPrefix.slice(1)}`;
+  const capitalizedLibraryName = `${libraryName.charAt(0).toUpperCase()}${libraryName.slice(1)}`;
+  const lowerLibraryName = libraryName.toLowerCase();
+  const libraryDesignName = `${lowerLibraryName}-design-system`;
 
   content = content
-    .replace(/Sl(?=[A-Z])/g, transformedLibraryPrefix)
-    .replace(/(?<![A-Za-z])sl-/g, `${String(libraryPrefix)}-`)
-    .replace(/shoelace-style/g, `${String(libraryName)}-design-system`)
-    .replace(/Shoelace/g, transformedLibraryName)
+    .replace(/Sl(?=[A-Z])/g, capitalizedPrefix)
+    .replace(/(?<![A-Za-z])sl-/g, `${libraryPrefix}-`)
+    .replace(/shoelace-style/g, libraryDesignName)
+    .replace(/Shoelace/g, capitalizedLibraryName)
     .replace(/shoelace/g, lowerLibraryName);
 
-  // Replace "@<libraryName>-design-system/" to "@shoelace-style/" if it doesn't end with libraryName
-  const regexPattern = new RegExp(`@${String(libraryName)}-design-system/(?!${lowerLibraryName}$)`, 'g');
-  content = content.replace(regexPattern, '@shoelace-style/');
-
-  return content;
+  const regexPattern = new RegExp(`@${libraryDesignName}/(?!${lowerLibraryName}$)`, 'g');
+  return content.replace(regexPattern, '@shoelace-style/');
 }
 
-function processDirectory(directory) {
+function processDirectory(directory, libraryName, libraryPrefix) {
   fs.readdirSync(directory).forEach(file => {
     const fullPath = path.join(directory, file);
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      processDirectory(fullPath); // Recursive call for directories
-      const newDirName = replaceContent(fullPath);
-      if (newDirName !== fullPath) {
-        fs.renameSync(fullPath, newDirName);
-      }
+      processDirectory(fullPath, libraryName, libraryPrefix);
+      fs.renameSync(fullPath, replaceContent(fullPath, libraryName, libraryPrefix));
     } else {
-      const content = fs.readFileSync(fullPath, 'utf-8');
-      const newContent = replaceContent(content);
-      fs.writeFileSync(fullPath, newContent);
-
-      const newFileName = replaceContent(fullPath);
-      if (newFileName !== fullPath) {
-        fs.renameSync(fullPath, newFileName);
-      }
+      fs.writeFileSync(fullPath, replaceContent(fs.readFileSync(fullPath, 'utf-8'), libraryName, libraryPrefix));
+      fs.renameSync(fullPath, replaceContent(fullPath, libraryName, libraryPrefix));
     }
   });
 }
 
-// Main replacement function
-function updateLibraryFileWithComponents(libraryName, components) {
-  // Helper functions
+function updateLibraryFileWithComponents(libraryName, libraryPrefix, components) {
   function properCase(tag) {
-    return tag.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+    return tag.split('-').map(word => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join('');
   }
 
   function tagWithoutPrefix(tag) {
-    return tag.slice(String(libraryPrefix).length + 1);  // Adding 1 for the '-' after prefix
+    return tag.slice(libraryPrefix.length + 1);
   }
 
-  const filePath = `${finalDest}/src/${String(libraryName)}.ts`;
-  let content = fs.readFileSync(filePath, 'utf8');
-
+  const filePath = `${finalDest}/src/${libraryName}.ts`;
+  const content = fs.readFileSync(filePath, 'utf8');
   const newComponents = components.map(component => {
-    return `export { default as ${properCase(component)} } from './components/${tagWithoutPrefix(component)}/${tagWithoutPrefix(component)}.js';`
+    return `export { default as ${properCase(component)} } from './components/${tagWithoutPrefix(component)}/${tagWithoutPrefix(component)}.js';`;
   }).join('\n');
 
-  // Insert new components before /* plop:component */
-  content = content.replace('/* plop:component */', `${newComponents}\n/* plop:component */`);
-
-  fs.writeFileSync(filePath, content, 'utf8');
+  fs.writeFileSync(filePath, content.replace('/* plop:component */', `${newComponents}\n/* plop:component */`), 'utf8');
 }
 
-// Function to delete a directory recursively
 function deleteFolderRecursive(directory) {
   if (fs.existsSync(directory)) {
-    fs.readdirSync(directory).forEach((file) => {
+    fs.readdirSync(directory).forEach(file => {
       const curPath = path.join(directory, file);
-
-      if (fs.lstatSync(curPath).isDirectory()) { // recurse
-        deleteFolderRecursive(curPath);
-      } else { // delete file
-        fs.unlinkSync(curPath);
-      }
+      fs.lstatSync(curPath).isDirectory() ? deleteFolderRecursive(curPath) : fs.unlinkSync(curPath);
     });
-
     fs.rmdirSync(directory);
   }
 }
 
-function updateGitIgnoreWithProtectedEntries(directory, protectedEntries) {
-  const gitignorePath = path.join(directory, '.gitignore');
+async function main() {
+  const libraryName = await getConfigParam('libraryName', "What's the name of your library? (only lowercase letters)", 'shoelace', /^[a-z]+$/, 'Only lowercase letters are allowed');
+  const libraryPrefix = await getConfigParam('libraryPrefix', "What's the prefix of your components? (only lowercase letters)", 'sl', /^[a-z]+$/, 'Only lowercase letters are allowed');
+  const version = await select({
+    message: 'Which version do you want to install?',
+    options: [
+      'next', 'v2.6.0', 'v2.5.2', 'v2.5.1', 'v2.5.0', 'v2.4.0', 'v2.3.0', 'v2.2.0', 'v2.1.0', 'v2.0.0'
+    ].map(value => ({ value })),
+  });
 
-  const customSection = `
-## CUSTOM SHOELACE START
-**/*
-${protectedEntries.map(entry => entry.startsWith('!') ? entry : `!${entry}`).join('\n')}
-## CUSTOM SHOELACE END
-`;
-  // If not, simply append it
-  fs.appendFileSync(gitignorePath, customSection);
-}
-
-function forceCopyFile(source, destination) {
-  if (fs.existsSync(source)) {
-    fs.copyFileSync(source, destination);
-  }
-}
-
-// Before downloading, clear the temp directory
-deleteFolderRecursive(dest);
-if (!fs.existsSync(dest)) {
-  fs.mkdirSync(dest, { recursive: true });
-}
-
-// Download the repo
-// @ts-ignore
-await download(`${repo}#${version}`, dest, (err) => {
-  if (err) {
-    console.error('Error downloading repo:', err);
-    return;
-  }
-
-  // Use git clean to remove all files ignored by .gitignore
-  execSync(`git clean ${finalDest} -X -f`);
-
-  processDirectory(dest);
-  copyDirectory(dest, finalDest, config.protected || []);
-  // Update .gitignore with protected entries
-  updateGitIgnoreWithProtectedEntries(dest, config.protected);
-  // Force copy the updated .gitignore to finalDest
-  forceCopyFile(path.join(dest, '.gitignore'), path.join(finalDest, '.gitignore'));
-
-  updateLibraryFileWithComponents(libraryName, config.additionalComponents || []);
-
-  outro(`You're all set!`);
-
-  // Before downloading, clear the temp directory
+  // Cleanup before downloading
   deleteFolderRecursive(dest);
-  if (!fs.existsSync(dest)) {
+  fs.mkdirSync(dest, { recursive: true });
+
+  await download(`${repo}#${version}`, dest, err => {
+    if (err) throw new Error(`Error downloading repo: ${err}`);
+
+    execSync(`git clean ${finalDest} -X -f`);
+    processDirectory(dest, libraryName, libraryPrefix);
+    copyDirectory(dest, finalDest, readConfig().protected || []);
+    updateLibraryFileWithComponents(libraryName, libraryPrefix, readConfig().additionalComponents || []);
+
+    outro(`You're all set!`);
+
+    deleteFolderRecursive(dest);
     fs.mkdirSync(dest, { recursive: true });
-  }
-});
+  });
+}
+
+main().catch(err => console.error(err));
