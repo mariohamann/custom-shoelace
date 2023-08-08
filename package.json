@@ -1,0 +1,21 @@
+{
+  "name": "custom-shoelace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cli": "node custom-shoelace.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "mariohamann",
+  "license": "ISC",
+  "devDependencies": {
+    "@clack/core": "^0.3.2",
+    "@clack/prompts": "^0.6.3"
+  },
+  "dependencies": {
+    "download-git-repo": "^3.0.2",
+    "glob": "^10.3.3"
+  }
+}

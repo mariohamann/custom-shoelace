@@ -1,0 +1,7 @@
+{
+  "libraryName": "leonardo",
+  "libraryPrefix": "ld",
+  "protected": [
+    "**/themes/light.css"
+  ]
+}
