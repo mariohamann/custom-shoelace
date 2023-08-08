@@ -137,25 +137,50 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
 
 
+  const tasks = [
+    {
+      label: 'Download repo',
+      action: () => new Promise((resolve, reject) => {
+        download(`${repo}#${version}`, temp, err => {
+          if (err) reject(`Error downloading repo: ${err}`);
+          else resolve();
+        });
+      })
+    },
+    {
+      label: 'Cleanup target',
+      action: () => execSync(`git clean ${finalDest} -X -f`)
+    },
+    {
+      label: 'Prepare files',
+      action: () => processDirectory(temp, libraryName, libraryPrefix)
+    },
+    {
+      label: 'Copy files',
+      action: () => {
+        const config = readConfig();
+        copyDirectory(temp, finalDest, config.protected || []);
+        updateLibraryFileWithComponents(libraryName, libraryPrefix, config.additionalComponents || []);
+      }
+    },
+    {
+      label: 'Remove temporary directory',
+      action: () => {
+        deleteFolderRecursive(temp);
+        fs.mkdirSync(temp, { recursive: true });
+      }
+    }
+  ];
+
   const s = spinner();
-  s.start('Download repo');
-  await download(`${repo}#${version}`, temp, err => {
-    if (err) throw new Error(`Error downloading repo: ${err}`);
-    s.stop('Repo downloaded');
-    s.start('Cleanup target');
-    execSync(`git clean ${finalDest} -X -f`);
-    s.stop('Target cleaned up');
-    s.start('Prepare files');
-    processDirectory(temp, libraryName, libraryPrefix);
-    s.stop('Files prepared');
-    s.start('Copy files');
-    copyDirectory(temp, finalDest, readConfig().protected || []);
-    updateLibraryFileWithComponents(libraryName, libraryPrefix, readConfig().additionalComponents || []);
-    s.stop('Files copied into target');
-    deleteFolderRecursive(temp);
-    fs.mkdirSync(temp, { recursive: true });
-    outro(`🎉 Job done!`);
-  });
+
+  for (const task of tasks) {
+    s.start(`⏳ ${task.label}`);
+    await task.action();
+    s.stop(`✅ ${task.label}`);
+  }
+
+  outro(`🎉 ${libraryName} is now set to Shoelace ${version}!`)
 }
 
-main().catch(err => console.error(err));
+main();
