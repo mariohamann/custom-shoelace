@@ -69,29 +69,6 @@ export default css`
     vertical-align: -2px;
   }
 
-  /*
-   * Standard buttons
-   */
-
-  /* Default */
-  .button--standard.button--default {
-    background-color: var(--ld-color-neutral-0);
-    border-color: var(--ld-color-neutral-300);
-    color: var(--ld-color-neutral-700);
-  }
-
-  .button--standard.button--default:hover:not(.button--disabled) {
-    background-color: var(--ld-color-primary-50);
-    border-color: var(--ld-color-primary-300);
-    color: var(--ld-color-primary-700);
-  }
-
-  .button--standard.button--default:active:not(.button--disabled) {
-    background-color: var(--ld-color-primary-100);
-    border-color: var(--ld-color-primary-400);
-    color: var(--ld-color-primary-700);
-  }
-
   /* Primary */
   .button--standard.button--primary {
     background-color: var(--ld-color-primary-600);
@@ -347,7 +324,6 @@ export default css`
     min-height: var(--ld-input-height-small);
     font-size: var(--ld-button-font-size-small);
     line-height: calc(var(--ld-input-height-small) - var(--ld-input-border-width) * 2);
-    border-radius: var(--ld-input-border-radius-small);
   }
 
   .button--medium {
@@ -355,7 +331,6 @@ export default css`
     min-height: var(--ld-input-height-medium);
     font-size: var(--ld-button-font-size-medium);
     line-height: calc(var(--ld-input-height-medium) - var(--ld-input-border-width) * 2);
-    border-radius: var(--ld-input-border-radius-medium);
   }
 
   .button--large {
@@ -363,53 +338,6 @@ export default css`
     min-height: var(--ld-input-height-large);
     font-size: var(--ld-button-font-size-large);
     line-height: calc(var(--ld-input-height-large) - var(--ld-input-border-width) * 2);
-    border-radius: var(--ld-input-border-radius-large);
-  }
-
-  /*
-   * Pill modifier
-   */
-
-  .button--pill.button--small {
-    border-radius: var(--ld-input-height-small);
-  }
-
-  .button--pill.button--medium {
-    border-radius: var(--ld-input-height-medium);
-  }
-
-  .button--pill.button--large {
-    border-radius: var(--ld-input-height-large);
-  }
-
-  /*
-   * Circle modifier
-   */
-
-  .button--circle {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .button--circle.button--small {
-    width: var(--ld-input-height-small);
-    border-radius: 50%;
-  }
-
-  .button--circle.button--medium {
-    width: var(--ld-input-height-medium);
-    border-radius: 50%;
-  }
-
-  .button--circle.button--large {
-    width: var(--ld-input-height-large);
-    border-radius: 50%;
-  }
-
-  .button--circle .button__prefix,
-  .button--circle .button__suffix,
-  .button--circle .button__caret {
-    display: none;
   }
 
   /*

@@ -2,6 +2,7 @@
   "libraryName": "leonardo",
   "libraryPrefix": "ld",
   "protected": [
-    "**/themes/light.css"
+    "**/themes/light.css",
+    "**/components/button/*"
   ]
 }

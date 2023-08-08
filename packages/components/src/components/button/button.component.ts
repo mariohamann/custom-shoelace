@@ -6,9 +6,9 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { LocalizeController } from '../../utilities/localize.js';
 import { property, query, state } from 'lit/decorators.js';
 import { watch } from '../../internal/watch.js';
-import LeonardoElement from '../../internal/leonardo-element.js';
 import LdIcon from '../icon/icon.component.js';
 import LdSpinner from '../spinner/spinner.component.js';
+import LeonardoElement from '../../internal/leonardo-element.js';
 import styles from './button.styles.js';
 import type { CSSResultGroup } from 'lit';
 import type { LeonardoFormControl } from '../../internal/leonardo-element.js';
@@ -69,8 +69,8 @@ export default class LdButton extends LeonardoElement implements LeonardoFormCon
   @property() title = ''; // make reactive to pass through
 
   /** The button's theme variant. */
-  @property({ reflect: true }) variant: 'default' | 'primary' | 'success' | 'neutral' | 'warning' | 'danger' | 'text' =
-    'default';
+  @property({ reflect: true }) variant: 'primary' | 'success' | 'neutral' | 'warning' | 'danger' | 'text' =
+    'primary';
 
   /** The button's size. */
   @property({ reflect: true }) size: 'small' | 'medium' | 'large' = 'medium';
@@ -86,15 +86,6 @@ export default class LdButton extends LeonardoElement implements LeonardoFormCon
 
   /** Draws an outlined button. */
   @property({ type: Boolean, reflect: true }) outline = false;
-
-  /** Draws a pill-style button with rounded edges. */
-  @property({ type: Boolean, reflect: true }) pill = false;
-
-  /**
-   * Draws a circular icon button. When this attribute is present, the button expects a single `<ld-icon>` in the
-   * default slot.
-   */
-  @property({ type: Boolean, reflect: true }) circle = false;
 
   /**
    * The type of button. Note that the default value is `button` instead of `submit`, which is opposite of how native
@@ -274,30 +265,27 @@ export default class LdButton extends LeonardoElement implements LeonardoFormCon
       <${tag}
         part="base"
         class=${classMap({
-          button: true,
-          'button--default': this.variant === 'default',
-          'button--primary': this.variant === 'primary',
-          'button--success': this.variant === 'success',
-          'button--neutral': this.variant === 'neutral',
-          'button--warning': this.variant === 'warning',
-          'button--danger': this.variant === 'danger',
-          'button--text': this.variant === 'text',
-          'button--small': this.size === 'small',
-          'button--medium': this.size === 'medium',
-          'button--large': this.size === 'large',
-          'button--caret': this.caret,
-          'button--circle': this.circle,
-          'button--disabled': this.disabled,
-          'button--focused': this.hasFocus,
-          'button--loading': this.loading,
-          'button--standard': !this.outline,
-          'button--outline': this.outline,
-          'button--pill': this.pill,
-          'button--rtl': this.localize.dir() === 'rtl',
-          'button--has-label': this.hasSlotController.test('[default]'),
-          'button--has-prefix': this.hasSlotController.test('prefix'),
-          'button--has-suffix': this.hasSlotController.test('suffix')
-        })}
+      button: true,
+      'button--primary': this.variant === 'primary',
+      'button--success': this.variant === 'success',
+      'button--neutral': this.variant === 'neutral',
+      'button--warning': this.variant === 'warning',
+      'button--danger': this.variant === 'danger',
+      'button--text': this.variant === 'text',
+      'button--small': this.size === 'small',
+      'button--medium': this.size === 'medium',
+      'button--large': this.size === 'large',
+      'button--caret': this.caret,
+      'button--disabled': this.disabled,
+      'button--focused': this.hasFocus,
+      'button--loading': this.loading,
+      'button--standard': !this.outline,
+      'button--outline': this.outline,
+      'button--rtl': this.localize.dir() === 'rtl',
+      'button--has-label': this.hasSlotController.test('[default]'),
+      'button--has-prefix': this.hasSlotController.test('prefix'),
+      'button--has-suffix': this.hasSlotController.test('suffix')
+    })}
         ?disabled=${ifDefined(isLink ? undefined : this.disabled)}
         type=${ifDefined(isLink ? undefined : this.type)}
         title=${this.title /* An empty title prevents browser validation tooltips from appearing on hover */}
@@ -318,9 +306,8 @@ export default class LdButton extends LeonardoElement implements LeonardoFormCon
         <slot name="prefix" part="prefix" class="button__prefix"></slot>
         <slot part="label" class="button__label"></slot>
         <slot name="suffix" part="suffix" class="button__suffix"></slot>
-        ${
-          this.caret ? html` <ld-icon part="caret" class="button__caret" library="system" name="caret"></ld-icon> ` : ''
-        }
+        ${this.caret ? html` <ld-icon part="caret" class="button__caret" library="system" name="caret"></ld-icon> ` : ''
+      }
         ${this.loading ? html`<ld-spinner part="spinner"></ld-spinner>` : ''}
       </${tag}>
     `;
