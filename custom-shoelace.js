@@ -203,7 +203,7 @@ function updateLibraryFileWithComponents(libraryName, components) {
     return tag.slice(String(libraryPrefix).length + 1);  // Adding 1 for the '-' after prefix
   }
 
-  const filePath = `src/${String(libraryName)}.ts`;
+  const filePath = `${finalDest}/src/${String(libraryName)}.ts`;
   let content = fs.readFileSync(filePath, 'utf8');
 
   const newComponents = components.map(component => {
@@ -232,6 +232,5 @@ await download(`${repo}#${version}`, dest, (err) => {
   copyDirectory(dest, finalDest, config.protected || []);
   updateLibraryFileWithComponents(libraryName, config.additionalComponents || []);
 
+  outro(`You're all set!`);
 });
-
-outro(`You're all set!`);

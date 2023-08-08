@@ -530,42 +530,40 @@
 
 /* _utility.css */
 
-
-
-sl-alert::part(base) {
+ld-alert::part(base) {
   border: none;
   border-radius: 0;
-  border-left: solid var(--sl-spacing-2x-small) var(--sl-color-primary-600);
-  background-color: var(--sl-color-primary-50);
+  border-left: solid var(--ld-spacing-2x-small) var(--ld-color-primary-600);
+  background-color: var(--ld-color-primary-50);
 }
 
-sl-alert[variant='success']::part(base) {
-  border-left-color: var(--sl-color-green-600);
-  background-color: var(--sl-color-green-50);
+ld-alert[variant='success']::part(base) {
+  border-left-color: var(--ld-color-green-600);
+  background-color: var(--ld-color-green-50);
 }
 
-sl-alert[variant='warning']::part(base) {
-  border-left-color: var(--sl-color-yellow-600);
-  background-color: var(--sl-color-yellow-50);
+ld-alert[variant='warning']::part(base) {
+  border-left-color: var(--ld-color-yellow-600);
+  background-color: var(--ld-color-yellow-50);
 }
 
-sl-alert[variant='danger']::part(base) {
-  border-left-color: var(--sl-color-red-600);
-  background-color: var(--sl-color-red-50);
+ld-alert[variant='danger']::part(base) {
+  border-left-color: var(--ld-color-red-600);
+  background-color: var(--ld-color-red-50);
 }
 
-sl-alert[variant='neutral']::part(base) {
-  border-left-color: var(--sl-color-neutral-600);
-  background-color: var(--sl-color-neutral-50);
+ld-alert[variant='neutral']::part(base) {
+  border-left-color: var(--ld-color-neutral-600);
+  background-color: var(--ld-color-neutral-50);
 }
 
-sl-alert::part(message) {
-  padding: var(--sl-spacing-small);
+ld-alert::part(message) {
+  padding: var(--ld-spacing-small);
 }
 
-sl-alert::part(icon) {
-  padding-top: var(--sl-spacing-small);
+ld-alert::part(icon) {
+  padding-top: var(--ld-spacing-small);
   align-items: flex-start;
-  padding-inline-start: var(--sl-spacing-small);
-  margin-right: calc(var(--sl-spacing-2x-small) * -1);
+  padding-inline-start: var(--ld-spacing-small);
+  margin-right: calc(var(--ld-spacing-2x-small) * -1);
 }
