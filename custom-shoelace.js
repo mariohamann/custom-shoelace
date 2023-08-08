@@ -1,5 +1,5 @@
 import { TextPrompt, isCancel } from '@clack/core';
-import { intro, outro, text, select } from '@clack/prompts';
+import { intro, outro, text, select, confirm, spinner } from '@clack/prompts';
 import download from 'download-git-repo';
 import fs from 'fs';
 import path from 'path';
@@ -8,7 +8,7 @@ import { execSync } from 'child_process';
 
 const CONFIG_FILE = 'custom-shoelace.config.json';
 const repo = 'shoelace-style/shoelace';
-const dest = 'temp/repo';
+const temp = 'temp';
 const finalDest = './packages/components';
 
 intro('🥾 Custom Shoelace CLI');
@@ -128,22 +128,33 @@ async function main() {
     ].map(value => ({ value })),
   });
 
+  await confirm({
+    message: `Do you want to continue? This will delete everything that is .gitignored in ${finalDest}.`,
+  });
+
   // Cleanup before downloading
-  deleteFolderRecursive(dest);
-  fs.mkdirSync(dest, { recursive: true });
+  deleteFolderRecursive(temp);
+  fs.mkdirSync(temp, { recursive: true });
 
-  await download(`${repo}#${version}`, dest, err => {
+
+  const s = spinner();
+  s.start('Download repo');
+  await download(`${repo}#${version}`, temp, err => {
     if (err) throw new Error(`Error downloading repo: ${err}`);
-
+    s.stop('Repo downloaded');
+    s.start('Cleanup target');
     execSync(`git clean ${finalDest} -X -f`);
-    processDirectory(dest, libraryName, libraryPrefix);
-    copyDirectory(dest, finalDest, readConfig().protected || []);
+    s.stop('Target cleaned up');
+    s.start('Prepare files');
+    processDirectory(temp, libraryName, libraryPrefix);
+    s.stop('Files prepared');
+    s.start('Copy files');
+    copyDirectory(temp, finalDest, readConfig().protected || []);
     updateLibraryFileWithComponents(libraryName, libraryPrefix, readConfig().additionalComponents || []);
-
-    outro(`You're all set!`);
-
-    deleteFolderRecursive(dest);
-    fs.mkdirSync(dest, { recursive: true });
+    s.stop('Files copied into target');
+    deleteFolderRecursive(temp);
+    fs.mkdirSync(temp, { recursive: true });
+    outro(`🎉 Job done!`);
   });
 }
 
