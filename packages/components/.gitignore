@@ -12,4 +12,5 @@ cdn
 !**/themes/light.css
 !**/components/button/*
 !**/components/status-text/*
+!**/components/icon/library.default.ts
 ## CUSTOM SHOELACE END

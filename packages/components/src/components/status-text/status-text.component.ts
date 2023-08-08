@@ -1,7 +1,5 @@
 import { html } from 'lit';
-import { LocalizeController } from '../../utilities/localize.js';
 import { property } from 'lit/decorators.js';
-import { watch } from '../../internal/watch.js';
 import LeonardoElement from '../../internal/leonardo-element.js';
 import styles from './status-text.styles.js';
 import type { CSSResultGroup } from 'lit';
@@ -14,8 +12,6 @@ import type { CSSResultGroup } from 'lit';
  *
  * @dependency ld-example
  *
- * @event ld-event-name - Emitted as an example.
- *
  * @slot - The default slot.
  * @slot example - An example slot.
  *
@@ -26,15 +22,8 @@ import type { CSSResultGroup } from 'lit';
 export default class LdStatusText extends LeonardoElement {
   static styles: CSSResultGroup = styles;
 
-  private readonly localize = new LocalizeController(this);
-
   /** An example attribute. */
   @property() attr = 'example';
-
-  @watch('example')
-  handleExampleChange() {
-    // do something
-  }
 
   render() {
     return html` <span class="status-text"><slot>This will be a status text.</slot></span> `;

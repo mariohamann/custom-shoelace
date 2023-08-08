@@ -1,4 +1,3 @@
-import { TextPrompt, isCancel } from '@clack/core';
 import { intro, outro, text, select, confirm, spinner } from '@clack/prompts';
 import download from 'download-git-repo';
 import fs from 'fs';

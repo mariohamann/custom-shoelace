@@ -4,7 +4,8 @@
   "protected": [
     "**/themes/light.css",
     "**/components/button/*",
-    "**/components/status-text/*"
+    "**/components/status-text/*",
+    "**/components/icon/library.default.ts"
   ],
   "additionalComponents": [
     "ld-status-text"
