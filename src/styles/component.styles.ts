@@ -1,0 +1,1 @@
+../../.vendor/src/styles/component.styles.ts

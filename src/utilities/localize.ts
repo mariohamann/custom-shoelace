@@ -1,0 +1,1 @@
+../../.vendor/src/utilities/localize.ts

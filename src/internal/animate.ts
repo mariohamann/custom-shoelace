@@ -1,0 +1,1 @@
+../../.vendor/src/internal/animate.ts

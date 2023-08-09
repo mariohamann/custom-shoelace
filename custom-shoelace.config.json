@@ -1,4 +1,15 @@
 {
   "libraryName": "leonardo",
-  "libraryPrefix": "ld"
+  "libraryPrefix": "ld",
+  "vendorPath": "./.vendor",
+  "includeGlobs": [
+    "src/components/alert/**",
+    "src/components/icon/**",
+    "src/internal/**",
+    "src/utilities/**",
+    "src/styles/**",
+    "src/components/icon-button/**",
+    "src/components/spinner/**"
+  ],
+  "targetPath": "."
 }

@@ -1,0 +1,1 @@
+../../.vendor/src/utilities/animation-registry.ts

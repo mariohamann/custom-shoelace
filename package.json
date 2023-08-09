@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cli": "node custom-shoelace.js"
+    "dev": "storybook dev -p 6006",
+    "build": "tsc && vite build",
+    "build-storybook": "storybook build",
+    "cli": "node scripts/custom-shoelace.js"
   },
   "type": "module",
   "keywords": [],
@@ -12,11 +15,25 @@
   "license": "ISC",
   "devDependencies": {
     "@clack/core": "^0.3.2",
-    "@clack/prompts": "^0.6.3"
+    "@clack/prompts": "^0.6.3",
+    "@mariohamann/symlink-files": "^1.1.0",
+    "@storybook/addon-essentials": "^7.2.1",
+    "@storybook/addon-links": "^7.2.1",
+    "@storybook/blocks": "^7.2.1",
+    "@storybook/web-components": "^7.2.1",
+    "@storybook/web-components-vite": "^7.2.1",
+    "download-git-repo": "^3.0.2",
+    "glob": "^10.3.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.2.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-replace": "^0.1.1"
   },
   "dependencies": {
-    "@mariohamann/symlink-files": "^1.0.0",
-    "download-git-repo": "^3.0.2",
-    "glob": "^10.3.3"
+    "@shoelace-style/animations": "^1.1.0",
+    "@shoelace-style/localize": "^3.1.1",
+    "lit": "^2.7.6"
   }
 }

@@ -1,0 +1,1 @@
+../../../.vendor/src/components/alert/alert.ts
