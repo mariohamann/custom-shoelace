@@ -11,6 +11,13 @@ import { updateReadonlyFilesForGit } from './update-gitignore.js';
 const CONFIG_FILE = 'custom-shoelace.config.json';
 const repo = 'shoelace-style/shoelace';
 
+const DEFAULTS = {
+  VENDOR_PATH: '.vendor',
+  TARGET_PATH: '.',
+  VSCODE_PATH: '.vscode/settings.json',
+  GITIGNORE_PATH: '.gitignore',
+};
+
 intro('🥾 Custom CUSTOM SHOELACE CLI');
 
 function readConfig() {
@@ -60,8 +67,8 @@ async function main() {
   if (!config.vendorPath) {
     config.vendorPath = await text({
       message: 'Enter vendor path:',
-      placeholder: '.vendor',
-      initialValue: '.vendor'
+      placeholder: DEFAULTS.VENDOR_PATH,
+      initialValue: DEFAULTS.VENDOR_PATH
     });
     saveConfig(config);
   }
@@ -70,8 +77,8 @@ async function main() {
   if (!config.targetPath) {
     config.targetPath = await text({
       message: 'Enter target path:',
-      placeholder: '.',
-      initialValue: '.'
+      placeholder: DEFAULTS.TARGET_PATH,
+      initialValue: DEFAULTS.TARGET_PATH
     });
     saveConfig(config);
   }
@@ -182,8 +189,8 @@ async function main() {
     if (config.lockFilesForVSCode) {
       config.vscodePath = await text({
         message: 'Enter VS Code path:',
-        placeholder: '.vscode/settings.json',
-        initialValue: '.vscode/settings.json'
+        placeholder: DEFAULTS.VSCODE_PATH,
+        initialValue: DEFAULTS.VSCODE_PATH
       });
     }
   }
@@ -205,8 +212,8 @@ async function main() {
     if (config.updateGitignore) {
       config.gitignorePath = await text({
         message: 'Enter .gitignore path:',
-        placeholder: '.gitignore',
-        initialValue: '.gitignore'
+        placeholder: DEFAULTS.GITIGNORE_PATH,
+        initialValue: DEFAULTS.GITIGNORE_PATH
       });
     }
   }
