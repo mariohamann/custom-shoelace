@@ -1,4 +1,4 @@
-import { intro, outro, text, select, confirm, spinner, isCancel, cancel, multiselect } from '@clack/prompts';
+import { intro, outro, text, select, confirm, spinner, isCancel, cancel } from '@clack/prompts';
 import download from 'download-git-repo';
 import fs from 'fs';
 import path from 'path';
