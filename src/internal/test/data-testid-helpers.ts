@@ -1,1 +1,0 @@
-../../../.vendor/src/internal/test/data-testid-helpers.ts

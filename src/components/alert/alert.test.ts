@@ -1,1 +1,0 @@
-../../../.vendor/src/components/alert/alert.test.ts

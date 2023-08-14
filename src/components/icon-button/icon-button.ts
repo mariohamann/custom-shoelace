@@ -1,1 +1,0 @@
-../../../.vendor/src/components/icon-button/icon-button.ts

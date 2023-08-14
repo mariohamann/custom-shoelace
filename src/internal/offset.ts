@@ -1,1 +1,0 @@
-../../.vendor/src/internal/offset.ts

@@ -1,1 +1,0 @@
-../../../.vendor/src/components/icon/icon.test.ts

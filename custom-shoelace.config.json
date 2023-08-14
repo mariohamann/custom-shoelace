@@ -1,15 +1,11 @@
 {
   "libraryName": "leonardo",
   "libraryPrefix": "ld",
-  "vendorPath": "./.vendor",
-  "includeGlobs": [
-    "src/components/alert/**",
-    "src/components/icon/**",
-    "src/internal/**",
-    "src/utilities/**",
-    "src/styles/**",
-    "src/components/icon-button/**",
-    "src/components/spinner/**"
-  ],
-  "targetPath": "."
+  "shoelaceVersion": "v2.6.0",
+  "vendorPath": ".vendor",
+  "targetPath": ".",
+  "components": [
+    "alert",
+    "button"
+  ]
 }
