@@ -1,5 +1,5 @@
 {
-  "name": "custom-shoelace",
+  "name": "@custom-shoelace/cli",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,15 +14,14 @@
   "author": "mariohamann",
   "license": "ISC",
   "devDependencies": {
-    "@clack/core": "^0.3.2",
-    "@clack/prompts": "^0.6.3",
+    "@shoelace-style/animations": "^1.1.0",
+    "@shoelace-style/localize": "^3.1.1",
     "@storybook/addon-essentials": "^7.2.1",
     "@storybook/addon-links": "^7.2.1",
     "@storybook/blocks": "^7.2.1",
     "@storybook/web-components": "^7.2.1",
     "@storybook/web-components-vite": "^7.2.1",
-    "download-git-repo": "^3.0.2",
-    "glob": "^10.3.3",
+    "lit": "^2.7.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.2.1",
@@ -31,10 +30,10 @@
     "vite-plugin-replace": "^0.1.1"
   },
   "dependencies": {
-    "@shoelace-style/animations": "^1.1.0",
-    "@shoelace-style/localize": "^3.1.1",
+    "@clack/core": "^0.3.3",
+    "@clack/prompts": "^0.7.0",
     "dependency-tree": "^10.0.9",
-    "globby": "^13.2.2",
-    "lit": "^2.7.6"
+    "download-git-repo": "^3.0.2",
+    "globby": "^13.2.2"
   }
 }
