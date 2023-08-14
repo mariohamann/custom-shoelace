@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { intro, outro, text, select, confirm, spinner, isCancel, cancel } from '@clack/prompts';
 import download from 'download-git-repo';
 import fs from 'fs';
@@ -18,7 +20,7 @@ const DEFAULTS = {
   GITIGNORE_PATH: '.gitignore',
 };
 
-intro('🥾 Custom CUSTOM SHOELACE CLI');
+intro('🥾 Custom Shoelace CLI');
 
 function readConfig() {
   return fs.existsSync(CONFIG_FILE) ? JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) : {};

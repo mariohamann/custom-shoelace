@@ -2,13 +2,19 @@
   "name": "@custom-shoelace/cli",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "scripts/cli.js",
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "tsc && vite build",
     "build-storybook": "storybook build",
     "cli": "node scripts/cli.js"
   },
+  "bin": {
+    "custom-shoelace": "./scripts/cli.js"
+  },
+  "files": [
+    "scripts/*"
+  ],
   "type": "module",
   "keywords": [],
   "author": "mariohamann",
