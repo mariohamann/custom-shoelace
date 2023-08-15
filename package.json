@@ -1,8 +1,12 @@
 {
   "name": "@custom-shoelace/cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "scripts/cli.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mariohamann/custom-shoelace",
+  },
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "tsc && vite build",
