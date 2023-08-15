@@ -14,7 +14,7 @@ const CONFIG_FILE = 'custom-shoelace.config.json';
 const repo = 'shoelace-style/shoelace';
 
 const DEFAULTS = {
-  VENDOR_PATH: '.vendor',
+  VENDOR_PATH: 'vendor',
   TARGET_PATH: '.',
   VSCODE_PATH: '.vscode/settings.json',
   GITIGNORE_PATH: '.gitignore',
@@ -147,7 +147,7 @@ async function main() {
   }
   saveConfig(config);
 
-  if (command === 'add' || config.components.length === 0) {
+  if (command === 'add' || !config.components) {
     const newComponent = await text({
       message: 'Which component would you like to install?',
       placeholder: 'e. g. "alert"',
@@ -159,7 +159,8 @@ async function main() {
         if (!availableComponents.includes(value)) return 'Component not found in Shoelace';
       },
     });
-    config.components = [...config.components, newComponent].sort();
+    config.components = [...(config.components || []), newComponent].sort();
+    saveConfig(config);
   }
 
   s.start(`⏳ Calculate dependencies`);
