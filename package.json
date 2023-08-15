@@ -5,7 +5,7 @@
   "main": "scripts/cli.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mariohamann/custom-shoelace",
+    "url": "https://github.com/mariohamann/custom-shoelace"
   },
   "scripts": {
     "dev": "storybook dev -p 6006",
