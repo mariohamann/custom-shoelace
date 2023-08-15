@@ -114,7 +114,7 @@ async function buildTheSource() {
     splitting: true,
     plugins: [
       replace({
-        __SHOELACE_VERSION__: leonardoVersion
+        __PACKAGE_VERSION__: leonardoVersion
       })
     ]
   };

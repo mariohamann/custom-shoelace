@@ -1,3 +1,4 @@
+import packageJson from "./package.json";
 import { replaceCodePlugin } from "vite-plugin-replace";
 
 /** @type {import('vite').UserConfig} */
@@ -6,8 +7,8 @@ export default {
     replaceCodePlugin({
       replacements: [
         {
-          from: "__SHOELACE_VERSION__",
-          to: JSON.stringify('1.0.0'),
+          from: "__PACKAGE_VERSION__",
+          to: `'${packageJson.version}'`,
         },
       ],
     }),

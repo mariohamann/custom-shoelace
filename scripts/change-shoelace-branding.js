@@ -12,7 +12,8 @@ function replaceContent(content, libraryName, libraryPrefix) {
     .replace(/(?<![A-Za-z])sl-/g, `${libraryPrefix}-`)
     .replace(/shoelace-style/g, libraryDesignName)
     .replace(/Shoelace/g, capitalizedLibraryName)
-    .replace(/shoelace/g, lowerLibraryName);
+    .replace(/shoelace/g, lowerLibraryName)
+    .replace('__SHOELACE_VERSION__', '__PACKAGE_VERSION__');
 
   const regexPattern = new RegExp(`@${libraryDesignName}/(?!${lowerLibraryName}$)`, 'g');
   return content.replace(regexPattern, '@shoelace-style/');

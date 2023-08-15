@@ -95,7 +95,7 @@ export default class LeonardoElement extends LitElement {
 
   /* eslint-disable */
   // @ts-expect-error This is auto-injected at build time.
-  static version = __SHOELACE_VERSION__;
+  static version = __PACKAGE_VERSION__;
   /* eslint-enable */
 
   static define(name: string, elementConstructor = this, options: ElementDefinitionOptions = {}) {
